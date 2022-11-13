@@ -2,22 +2,28 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Main extends JPanel {
-    final int BF_WIDTH = 576;
-    final int BF_HEIGHT = 576;
+    final int BF_WIDTH = 450;
+    final int BF_HEIGHT = 450;
     final int TANK_WIDTH = 50;
     final int TANK_HIGHT = 50;
     final int TANK_SPEED = 5;
     final int BULLET_SPEED = 2;
+    final int obstSize = 50;
+    final int UP = 1;
+    final int DOWN = 2;
+    final int LEFT = 3;
+    final int RIGHT = 4;
 
 
     //Direction: 1- Up, 2 - Down, 3 - Left, 4 - Right
 
-    int direction = 2;
-    int tankX = 256;
-    int tankY = 256;
+    int direction = 4;
+    int tankX = 250;
+    int tankY = 250;
 
-    int bulletX = 320;
-    int bulletY = 320;
+    int bulletX = 0;
+    int bulletY = 0;
+    String[] obst = {"B", "W", "B", "G", "G", "W", "B", "G", "B"};
 
     void fire() throws Exception {
         bulletX = tankX + 19;
@@ -44,6 +50,9 @@ public class Main extends JPanel {
             Thread.sleep(BULLET_SPEED);
             repaint();
         }
+        bulletX = -20;
+        bulletY = -20;
+        repaint();
 
 
     }
@@ -132,7 +141,26 @@ public class Main extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.setColor(Color.GREEN);
+        for (int i = 0; i < obst.length; i++) {
+            if (obst[i] == "B") {
+                g.setColor(Color.BLUE);
+
+            } else if (obst[i] == "G") {
+                g.setColor(Color.GRAY);
+            } else if (obst[i] == "W") {
+                g.setColor(Color.WHITE);
+
+            }
+            int x = i;
+            g.fillRect(x * TANK_HIGHT, 0, obstSize, obstSize);
+
+        }
+
+        //draw tank
+        g.setColor(Color.GREEN);
         g.fillRect(tankX, tankY, TANK_WIDTH, TANK_HIGHT);
+
+        //draw gun
         g.setColor(Color.BLACK);
 
         switch (direction) {
@@ -153,6 +181,7 @@ public class Main extends JPanel {
                 break;
             }
         }
+        //draw bullet
         g.setColor(Color.RED);
         g.fillRect(bulletX, bulletY, 12, 12);
     }
