@@ -7,7 +7,7 @@ public class Main extends JPanel {
     final int TANK_WIDTH = 50;
     final int TANK_HIGHT = 50;
     final int TANK_SPEED = 5;
-    final int BULLET_SPEED = 2;
+    final int BULLET_SPEED = 4;
     final int obstSize = 50;
     final int UP = 1;
     final int DOWN = 2;
@@ -17,13 +17,36 @@ public class Main extends JPanel {
 
     //Direction: 1- Up, 2 - Down, 3 - Left, 4 - Right
 
-    int direction = 4;
+    int direction = 2;
     int tankX = 250;
     int tankY = 250;
 
     int bulletX = 0;
     int bulletY = 0;
-    String[] obst = {"B", "W", "B", "G", "G", "W", "B", "G", "B"};
+    String[][] obst = {{"B", "W", "B", "G", "G", "W", "B", "G", "B"},
+                       {"B", "W", "B", "G", "G", "B", "B", "G", "B"},
+                       {"G", "W", "W", "G", "G", "W", "G", "G", "W"},
+                       {"B", "B", "B", "G", "B", "W", "B", "W", "B"},
+                       {"B", "W", "B", "G", "G", "B", "B", "W", "B"},
+                       {"G", "W", "B", "W", "G", "W", "G", "G", "B"},
+                       {"W", "W", "B", "W", "B", "W", "B", "G", "W"},
+                       {"B", "W", "B", "G", "G", "W", "B", "G", "B"},
+                       {"B", "W", "B", "W", "B", "W", "G", "G", "W"}
+
+    };
+    boolean cantMove() {
+        return (direction == UP && tankY == 0) || (direction == DOWN && tankY == BF_HEIGHT - TANK_HIGHT)
+    || (direction == LEFT && tankX == 0) || (direction == RIGHT && tankX == BF_WIDTH-TANK_WIDTH);
+    }
+    boolean processInterception(){
+        int y = bulletY/50;
+        int x = bulletX/50;
+        if (obst[y][x].equals("B")){
+            obst[y][x] = "G";
+            return true;
+        }
+        return false;
+    }
 
     void fire() throws Exception {
         bulletX = tankX + 19;
@@ -46,14 +69,24 @@ public class Main extends JPanel {
                     bulletX++;
                     break;
                 }
+
+                }
+                if (processInterception()){
+                    destroyBullet();
+
             }
             Thread.sleep(BULLET_SPEED);
             repaint();
         }
-        bulletX = -20;
-        bulletY = -20;
-        repaint();
+        destroyBullet();
 
+
+
+    }
+    void destroyBullet(){
+        bulletX = -100;
+        bulletY = -100;
+        repaint();
 
     }
 
@@ -75,9 +108,11 @@ public class Main extends JPanel {
     }
 
     void runTheGame() throws Exception {
-        fire();
-//        while (tankY < BF_HEIGHT-TANK_HIGHT) {
-//            move(4);
+           while(true) {
+               fire();
+           }
+//        while (tankX > 0) {
+//            move(LEFT);
 //        }
 
     }
@@ -142,17 +177,22 @@ public class Main extends JPanel {
         super.paintComponent(g);
         g.setColor(Color.GREEN);
         for (int i = 0; i < obst.length; i++) {
-            if (obst[i] == "B") {
-                g.setColor(Color.BLUE);
+            for (int j = 0; j < obst.length; j++) {
 
-            } else if (obst[i] == "G") {
-                g.setColor(Color.GRAY);
-            } else if (obst[i] == "W") {
-                g.setColor(Color.WHITE);
 
+                if (obst[j][i].equals("B")) {
+                    g.setColor(new Color(147, 71, 18, 231));
+
+                } else if (obst[j][i].equals("G")) {
+                    g.setColor(new Color(96, 105, 108, 231));
+                } else if (obst[j][i].equals("W")) {
+                    g.setColor(new Color(34, 175, 190, 231));
+
+                }
+                g.fillRect(i * TANK_HIGHT, j*TANK_WIDTH, obstSize, obstSize);
             }
-            int x = i;
-            g.fillRect(x * TANK_HIGHT, 0, obstSize, obstSize);
+//            int x = i;
+
 
         }
 
